@@ -72,6 +72,7 @@ def get_day():
     '''
     
     day = input('\nWhich day? Please type your response as an integer.\n')
+    day = int(day)
     # TODO: handle raw input and complete function
     if day not in [x+1 for x in range(31)]:
       raise ValueError("Only integer from 1 to 31 is accepted")
@@ -88,13 +89,14 @@ def popular_month(city):
     df['Start Time'] = pd.to_datetime(df['Start Time'])
     df['month'] = df['Start Time'].dt.strftime('%B') #get month names immediately
     popular_month = df['month'].mode()[0]
-    return(popular_month)
+    print(popular_month)
 
 def popular_day(city):
     '''TODO: fill out docstring with description, arguments, and return values.
     Question: What is the most popular day of week (Monday, Tuesday, etc.) for start time?
     '''
     # TODO: complete function
+    
     df = pd.read_csv(city)
     df['Start Time'] = pd.to_datetime(df['Start Time'])
     df['day'] = df['Start Time'].dt.strftime('%A') #get days immediately
@@ -129,7 +131,7 @@ def trip_duration(city, month, day):
       df = df[df['day'] == day]
     total = np.sum(df['Trip Duration'])
     average = np.average(df['Trip Duration'])
-    return (total, average)
+    #print('Total trip duration is {}, Average trip duration is {}'. format(total, average))
 
                       
 def popular_stations(city, month, day):
@@ -138,12 +140,12 @@ def popular_stations(city, month, day):
     '''
     # TODO: complete function
     df = pd.read_csv(city)
-    start_station = df['Start Station'].value_counts().index[0] #need station name, not a pd series output
-    end_station = df['End Station'].value_counts().index[0]
     if month!='all':
       df = df[df['month'] == month]
     if day!='all':
       df = df[df['day'] == day]
+    start_station = df['Start Station'].value_counts().index[0]
+    end_station = df['End Station'].value_counts().index[0]
     return (start_station, end_station)
     
 
@@ -153,13 +155,14 @@ def popular_trip(city, month, day):
     '''
     # TODO: complete function
     df = pd.read_csv(city)
-    start_station = df['Start Station'].value_counts().index[0] #need station name, not a pd series output
-    end_station = df['End Station'].value_counts().index[0]
-    df['trip'] = df['Start Station'] + '-' + df['End Station']
+    #start_station = df['Start Station'].value_counts().index[0] #need station name, not a pd series output
+    #end_station = df['End Station'].value_counts().index[0]
+    df['trip'] = df['Start Station'].mode()[0] + '-' + df['End Station'].mode()[0]
     if month!='all':
       df = df[df['month'] == month]
     if day!='all':
       df = df[df['day'] == day]
+    trip = df['trip'].mode()[0]
     return(trip)
 
 
@@ -225,16 +228,16 @@ def display_data():
     # TODO: handle raw input and complete function
     return(display)
 
-
+  
 def statistics():
-    '''Calculates and prints out the descriptive statistics about a city and time period
+    '''#Calculates and prints out the descriptive statistics about a city and time period
     specified by the user via raw input.
 
     Args:
         none.
-    Returns:
+     Returns:
         none.
-    '''
+'''
     # Filter by city (Chicago, New York, Washington)
     city = get_city()
 
@@ -256,9 +259,7 @@ def statistics():
         start_time = time.time()
         
         #TODO: call popular_month function and print the results
-        popular_month(city)
-        
-        
+        popular_month()
         print("That took %s seconds." % (time.time() - start_time))
         print("Calculating the next statistic...")
 
@@ -268,6 +269,7 @@ def statistics():
         
         # TODO: call popular_day function and print the results
         popular_day(city)
+        print(popular_day)
        
         print("That took %s seconds." % (time.time() - start_time))
         print("Calculating the next statistic...")    
@@ -277,6 +279,7 @@ def statistics():
     # What is the most popular hour of day for start time?
     # TODO: call popular_hour function and print the results
     popular_hour(city)
+    print(popular_hour)
 
     print("That took %s seconds." % (time.time() - start_time))
     print("Calculating the next statistic...")
@@ -284,22 +287,27 @@ def statistics():
 
     # What is the total trip duration and average trip duration?
     # TODO: call trip_duration function and print the results
+    day = 'all'
+    month = 'all'
     trip_duration(city,month,day)
-
-    print("That took %s seconds." % (time.time() - start_time))
-    print("Calculating the next statistic...")
+    
+    print('Total trip duration: {},Average trip duration{}').format(trip_duration(city,month,day)
+    #print("That took %s seconds." % (time.time() - start_time))
+                                                                    print("Calculating the next statistic...")
     start_time = time.time()
 
     # What is the most popular start station and most popular end station?
     # TODO: call popular_stations function and print the results
-    start_station(city, month, day)
-
+    
+    popular_stations(city, month, day)
     print("That took %s seconds." % (time.time() - start_time))
+    print(popular_stations)
     print("Calculating the next statistic...")
     start_time = time.time()
 
     # What is the most popular trip?
     # TODO: call popular_trip function and print the results
+    return popular_trip
     popular_trip(city, month, day)
 
     print("That took %s seconds." % (time.time() - start_time))
@@ -340,4 +348,5 @@ def statistics():
 
 if __name__ == "__main__":
 	statistics()
+    
     
